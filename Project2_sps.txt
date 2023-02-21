@@ -1,0 +1,978 @@
+SQL> -- This will ensure that all input and output is logged to the file.
+SQL> 
+SQL> --Suprima Pote Shrestha
+SQL> --INSY 3304-001
+SQL> --PROJECT 2
+SQL> 
+SQL> 
+SQL> DROP TABLE ORDERDETAIL_sps;
+
+Table dropped.
+
+SQL> DROP TABLE ORDER_sps;
+
+Table dropped.
+
+SQL> DROP TABLE CUSTOMER_sps ;
+
+Table dropped.
+
+SQL> DROP TABLE SALESREP_sps;
+
+Table dropped.
+
+SQL> DROP TABLE PRODUCT_sps;
+
+Table dropped.
+
+SQL> DROP TABLE COMMISSION_sps;
+
+Table dropped.
+
+SQL> DROP TABLE DEPARTMENT_sps;
+
+Table dropped.
+
+SQL> DROP TABLE PRODCAT_sps;
+
+Table dropped.
+
+SQL> 
+SQL> 
+SQL> -- Part IA
+SQL> 
+SQL> CREATE TABLE PRODCAT_sps
+  2  (
+  3  ProdCatID	  NUMBER(5),
+  4  ProdCatName  VARCHAR(20) NOT NULL,
+  5  PRIMARY KEY  (ProdCatID)
+  6  );
+
+Table created.
+
+SQL> 
+SQL> 
+SQL> CREATE TABLE DEPARTMENT_sps
+  2  (
+  3  DeptID	    NUMBER(5),
+  4  DeptName	    VARCHAR(15) NOT NULL,
+  5  PRIMARY KEY    (DeptID)
+  6  );
+
+Table created.
+
+SQL> 
+SQL> CREATE TABLE COMMISSION_sps
+  2  (
+  3  CommClass	     CHAR(1),
+  4  CommRate	     NUMBER(3,2) NOT NULL,
+  5  PRIMARY KEY     (CommClass)
+  6  ) ;
+
+Table created.
+
+SQL> 
+SQL> CREATE TABLE PRODUCT_sps
+  2   (
+  3  ProdID	     NUMBER(5),
+  4  ProdName	     VARCHAR(20) NOT NULL,
+  5  ProdCatID	     NUMBER(5) NOT  NULL,
+  6  ProdPrice	     NUMBER(4,2) NOT NULL,
+  7  PRIMARY KEY     (ProdID),
+  8  FOREIGN KEY     (ProdCatID) REFERENCES PRODCAT_sps
+  9  );
+
+Table created.
+
+SQL> 
+SQL>  CREATE TABLE SALESREP_sps
+  2  (
+  3  SalesRepID 	 NUMBER(5),
+  4  SalesRepFName	 VARCHAR(10) NOT NULL,
+  5  SalesRepLName	 VARCHAR(10) NOT NULL,
+  6  CommClass		 CHAR(1) NOT NULL,
+  7  DeptID		 NUMBER(5) NOT NULL,
+  8  PRIMARY KEY	 (SalesRepID),
+  9  FOREIGN KEY	 (CommClass) REFERENCES COMMISSION_sps,
+ 10  FOREIGN KEY	 (DeptID) REFERENCES DEPARTMENT_sps
+ 11  );
+
+Table created.
+
+SQL> 
+SQL> CREATE TABLE CUSTOMER_sps
+  2  (
+  3  CustID		 CHAR(5) NOT NULL,
+  4  CustFName		 VARCHAR(15) NOT NULL,
+  5  CustLName		 VARCHAR(15) NOT NULL,
+  6  CustPhone		 CHAR(10),
+  7  SalesRepID 	 NUMBER(5) NOT NULL,
+  8  PRIMARY KEY	 (CustID),
+  9  FOREIGN KEY	 (SalesRepID) REFERENCES SALESREP_sps
+ 10  );
+
+Table created.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> CREATE TABLE ORDER_sps
+  2  (
+  3  OrderID		 NUMBER(5),
+  4  OrderDate		 DATE NOT NULL,
+  5  CustID		 CHAR(5) NOT NULL,
+  6  PRIMARY KEY	 (OrderID),
+  7  FOREIGN KEY	 (CustID) REFERENCES CUSTOMER_sps
+  8  );
+
+Table created.
+
+SQL> 
+SQL> CREATE TABLE ORDERDETAIL_sps
+  2  (
+  3  OrderID		NUMBER(5),
+  4  ProdID		 NUMBER(5) NOT NULL,
+  5  ProdQty		 NUMBER(5) NOT NULL,
+  6  ProdPrice		 NUMBER(4,2) NOT NULL,
+  7  PRIMARY KEY	 (OrderID,ProdID),
+  8  FOREIGN KEY	 (OrderID) REFERENCES ORDER_sps,
+  9  FOREIGN KEY	 (ProdID) REFERENCES PRODUCT_sps
+ 10  );
+
+Table created.
+
+SQL> 
+SQL> 
+SQL> --PART 1B
+SQL> DESCRIBE ORDERDETAIL_sps
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ ORDERID                                   NOT NULL NUMBER(5)
+ PRODID                                    NOT NULL NUMBER(5)
+ PRODQTY                                   NOT NULL NUMBER(5)
+ PRODPRICE                                 NOT NULL NUMBER(4,2)
+
+SQL> DESCRIBE ORDER_sps
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ ORDERID                                   NOT NULL NUMBER(5)
+ ORDERDATE                                 NOT NULL DATE
+ CUSTID                                    NOT NULL CHAR(5)
+
+SQL> DESCRIBE CUSTOMER_sps
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ CUSTID                                    NOT NULL CHAR(5)
+ CUSTFNAME                                 NOT NULL VARCHAR2(15)
+ CUSTLNAME                                 NOT NULL VARCHAR2(15)
+ CUSTPHONE                                          CHAR(10)
+ SALESREPID                                NOT NULL NUMBER(5)
+
+SQL> DESCRIBE SALESREP_sps
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ SALESREPID                                NOT NULL NUMBER(5)
+ SALESREPFNAME                             NOT NULL VARCHAR2(10)
+ SALESREPLNAME                             NOT NULL VARCHAR2(10)
+ COMMCLASS                                 NOT NULL CHAR(1)
+ DEPTID                                    NOT NULL NUMBER(5)
+
+SQL> DESCRIBE PRODUCT_sps
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PRODID                                    NOT NULL NUMBER(5)
+ PRODNAME                                  NOT NULL VARCHAR2(20)
+ PRODCATID                                 NOT NULL NUMBER(5)
+ PRODPRICE                                 NOT NULL NUMBER(4,2)
+
+SQL> DESCRIBE COMMISSION_sps
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ COMMCLASS                                 NOT NULL CHAR(1)
+ COMMRATE                                  NOT NULL NUMBER(3,2)
+
+SQL> DESCRIBE DEPARTMENT_sps
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DEPTID                                    NOT NULL NUMBER(5)
+ DEPTNAME                                  NOT NULL VARCHAR2(15)
+
+SQL> DESCRIBE PRODCAT_sps
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PRODCATID                                 NOT NULL NUMBER(5)
+ PRODCATNAME                               NOT NULL VARCHAR2(20)
+
+SQL> 
+SQL> -- PART IIA
+SQL> 
+SQL> --Insert rows into PRODCAT table
+SQL> 
+SQL> INSERT INTO PRODCAT_sps
+  2  VALUES(1,'Hand Tools');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODCAT_sps
+  2  VALUES (2, 'Power Tools');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODCAT_sps
+  2  VALUES (3, 'Measuring Tools');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODCAT_sps
+  2  VALUES (4, 'Fastners');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODCAT_sps
+  2  VALUES (5, 'Hardware');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODCAT_sps
+  2  VALUES(6,'MISC');
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> --Insert rows into DEPARTMENT table
+SQL> INSERT INTO DEPARTMENT_sps
+  2  VALUES (10, 'Store Sales');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO DEPARTMENT_sps
+  2  VALUES(14, 'Corp Sales');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO DEPARTMENT_sps
+  2  VALUES (16, 'Web Sales');
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> --Insert rows into COMMISSION table
+SQL> INSERT INTO COMMISSION_sps
+  2  VALUES ('A', 0.1);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO COMMISSION_sps
+  2  VALUES ('B', 0.08);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO COMMISSION_sps
+  2  VALUES('Z', 0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO COMMISSION_sps
+  2  VALUES('C',0.05);
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> --Insert rows into PRODUCT table
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES(121,'BD Hammer', 1, 7.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES(228,'Makita Power Drill', 2, 65.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES(480,'1# BD Nails',4,3.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES (407,'1# BD Screws',4,4.25);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES (610,'3M Duct Tape',6 , 1.75);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES (618,'3M Masking Tape', 6,1.25);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES (380,'Acme Yard Stick', 3,1.25);
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES (535,'Schlage Door Knob', 5,6.50);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES (123,'Acme Pry Bar', 1, 5.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES (229,'BD Power Drill', 2,59.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  Values (124,'Acme Hammer', 1,6.50);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO PRODUCT_sps
+  2  VALUES (235,'Makita Power Drill', 2,65.00);
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> -- Insert rows into SALESREP table
+SQL> INSERT INTO SALESREP_sps
+  2  VALUES (10, 'Alice', 'Jones', 'A',10);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO SALESREP_sps
+  2  VALUES (12, 'Grey', 'Taylor', 'B', 14);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO SALESREP_sps
+  2  VALUES (14, 'Sara', 'Day', 'Z', 10);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO SALESREP_sps
+  2  VALUES (8, 'Kay', 'Price', 'C',14);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO SALESREP_sps
+  2  VALUES (20,'Bob', 'Jackson', 'B', 10);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO SALESREP_sps
+  2  VALUES (22, 'Micah', 'Moore', 'Z', 16);
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> -- Insert rows into CUTOMER table
+SQL> 
+SQL> INSERT INTO CUSTOMER_sps
+  2  VALUES( 'S100', 'John', 'Smith','2145551212', 10);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO CUSTOMER_sps
+  2  VALUES( 'A120', 'Jane', 'Adams','8175553434', 12);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO CUSTOMER_sps
+  2  VALUES ('J090', 'Tim', 'Jones', NULL, 14);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO CUSTOMER_sps
+  2  VALUES ('B200', 'Ann', 'Brown', '9725557979', 8);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO CUSTOMER_sps
+  2  VALUES ('G070', 'Kate', 'Green', '8175551034', 20);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO CUSTOMER_sps
+  2  VALUES ('S120', 'Nicole' , 'Sims', NULL, 22);
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL>  -- Insert rows into ORDER table
+SQL> INSERT INTO ORDER_sps
+  2  VALUES (100, '24-JAN-2022', 'S100');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDER_sps
+  2  VALUES (101, '25-JAN-2022', 'A120');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDER_sps
+  2  VALUES (102, '25-JAN-2022', 'J090');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDER_sps
+  2  VALUES (103, '26-JAN-2022', 'B200');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDER_sps
+  2  VALUES (104, '26-JAN-2022', 'S100');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDER_sps
+  2  VALUES (105, '26-JAN-2022', 'B200');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDER_sps
+  2  VALUES (106, '27-JAN-2022', 'G070');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDER_sps
+  2  VALUES (107, '27-JAN-2022', 'J090');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDER_sps
+  2  VALUES (108, '27-JAN-2022', 'S120');
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> --Inser rows into ORDERDETAIL table
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (100, 121, 2, 8.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (100, 228, 1, 65.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (100, 480, 2, 3.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (100, 407, 1, 4.25);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (101, 610, 200, 1.75);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (101, 618, 100, 1.25);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (102, 380, 2, 1.25);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (102, 121, 1, 7.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (102, 535, 4, 7.50);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (103, 121, 50, 7.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (103, 123, 20, 6.25);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (104, 229, 1, 50.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (104, 610, 200, 1.75);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (104, 380, 2, 1.25);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (104, 535, 4, 7.50);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (105, 610, 200, 1.75);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (105, 123, 40, 5.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (106, 124, 1, 6.50);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (107, 229, 1, 59.00);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (108, 235, 1, 65.00);
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> --save all rows
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> -- Part IIB
+SQL> 
+SQL> SELECT * FROM PRODCAT_sps;
+
+ PRODCATID PRODCATNAME                                                          
+---------- --------------------                                                 
+         1 Hand Tools                                                           
+         2 Power Tools                                                          
+         3 Measuring Tools                                                      
+         4 Fastners                                                             
+         5 Hardware                                                             
+         6 MISC                                                                 
+
+6 rows selected.
+
+SQL> SELECT * FROM PRODUCT_sps;
+
+    PRODID PRODNAME              PRODCATID  PRODPRICE                           
+---------- -------------------- ---------- ----------                           
+       121 BD Hammer                     1          7                           
+       228 Makita Power Drill            2         65                           
+       480 1# BD Nails                   4          3                           
+       407 1# BD Screws                  4       4.25                           
+       610 3M Duct Tape                  6       1.75                           
+       618 3M Masking Tape               6       1.25                           
+       380 Acme Yard Stick               3       1.25                           
+       535 Schlage Door Knob             5        6.5                           
+       123 Acme Pry Bar                  1          5                           
+       229 BD Power Drill                2         59                           
+       124 Acme Hammer                   1        6.5                           
+
+    PRODID PRODNAME              PRODCATID  PRODPRICE                           
+---------- -------------------- ---------- ----------                           
+       235 Makita Power Drill            2         65                           
+
+12 rows selected.
+
+SQL> SELECT * FROM DEPARTMENT_sps;
+
+    DEPTID DEPTNAME                                                             
+---------- ---------------                                                      
+        10 Store Sales                                                          
+        14 Corp Sales                                                           
+        16 Web Sales                                                            
+
+SQL> SELECT * FROM COMMISSION_sps;
+
+C   COMMRATE                                                                    
+- ----------                                                                    
+A         .1                                                                    
+B        .08                                                                    
+Z          0                                                                    
+C        .05                                                                    
+
+SQL> SELECT * FROM ORDERDETAIL_sps;
+
+   ORDERID     PRODID    PRODQTY  PRODPRICE                                     
+---------- ---------- ---------- ----------                                     
+       100        121          2          8                                     
+       100        228          1         65                                     
+       100        480          2          3                                     
+       100        407          1       4.25                                     
+       101        610        200       1.75                                     
+       101        618        100       1.25                                     
+       102        380          2       1.25                                     
+       102        121          1          7                                     
+       102        535          4        7.5                                     
+       103        121         50          7                                     
+       103        123         20       6.25                                     
+
+   ORDERID     PRODID    PRODQTY  PRODPRICE                                     
+---------- ---------- ---------- ----------                                     
+       104        229          1         50                                     
+       104        610        200       1.75                                     
+       104        380          2       1.25                                     
+       104        535          4        7.5                                     
+       105        610        200       1.75                                     
+       105        123         40          5                                     
+       106        124          1        6.5                                     
+       107        229          1         59                                     
+       108        235          1         65                                     
+
+20 rows selected.
+
+SQL> SELECT * FROM ORDER_sps;
+
+   ORDERID ORDERDATE CUSTI                                                      
+---------- --------- -----                                                      
+       100 24-JAN-22 S100                                                       
+       101 25-JAN-22 A120                                                       
+       102 25-JAN-22 J090                                                       
+       103 26-JAN-22 B200                                                       
+       104 26-JAN-22 S100                                                       
+       105 26-JAN-22 B200                                                       
+       106 27-JAN-22 G070                                                       
+       107 27-JAN-22 J090                                                       
+       108 27-JAN-22 S120                                                       
+
+9 rows selected.
+
+SQL> SELECT * FROM CUSTOMER_sps;
+
+CUSTI CUSTFNAME       CUSTLNAME       CUSTPHONE  SALESREPID                     
+----- --------------- --------------- ---------- ----------                     
+S100  John            Smith           2145551212         10                     
+A120  Jane            Adams           8175553434         12                     
+J090  Tim             Jones                              14                     
+B200  Ann             Brown           9725557979          8                     
+G070  Kate            Green           8175551034         20                     
+S120  Nicole          Sims                               22                     
+
+6 rows selected.
+
+SQL> SELECT * FROM SALESREP_sps;
+
+SALESREPID SALESREPFN SALESREPLN C     DEPTID                                   
+---------- ---------- ---------- - ----------                                   
+        10 Alice      Jones      A         10                                   
+        12 Grey       Taylor     B         14                                   
+        14 Sara       Day        Z         10                                   
+         8 Kay        Price      C         14                                   
+        20 Bob        Jackson    B         10                                   
+        22 Micah      Moore      Z         16                                   
+
+6 rows selected.
+
+SQL> 
+SQL> -- PART III
+SQL> 
+SQL> --changing the phone number of a customer
+SQL> UPDATE CUSTOMER_sps
+  2  	 SET CustPhone = '2145551234'
+  3  WHERE CustID = 'B200';
+
+1 row updated.
+
+SQL> 
+SQL> INSERT INTO CUSTOMER_sps
+  2  VALUES('G119', 'Amanda', 'Green', NULL ,14);
+
+1 row created.
+
+SQL> 
+SQL> --ORDER TABLE
+SQL> UPDATE ORDER_sps
+  2  	 SET OrderDate = '28-JAN-2022'
+  3  WHERE OrderID = 108;
+
+1 row updated.
+
+SQL> 
+SQL> INSERT INTO ORDER_sps
+  2  VALUES (109,'28-JAN-2022','G119');
+
+1 row created.
+
+SQL> 
+SQL> --Changing price of product
+SQL> 
+SQL> UPDATE ORDERDETAIL_sps
+  2  	 SET ProdPrice= 62.00
+  3  WHERE ProdID = 235 AND OrderID = 108;
+
+1 row updated.
+
+SQL> 
+SQL> --Adding the Products
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (108,407,1,5.25);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (108,618,2,2.15);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (109,121,1,8.25);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO ORDERDETAIL_sps
+  2  VALUES (109,480,1,3.75);
+
+1 row created.
+
+SQL> 
+SQL> --save changes to disk
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> --PART IV
+SQL> 
+SQL> SELECT * FROM PRODCAT_sps
+  2  ORDER BY ProdCatID;
+
+ PRODCATID PRODCATNAME                                                          
+---------- --------------------                                                 
+         1 Hand Tools                                                           
+         2 Power Tools                                                          
+         3 Measuring Tools                                                      
+         4 Fastners                                                             
+         5 Hardware                                                             
+         6 MISC                                                                 
+
+6 rows selected.
+
+SQL> SELECT * FROM DEPARTMENT_sps
+  2  ORDER BY DeptName;
+
+    DEPTID DEPTNAME                                                             
+---------- ---------------                                                      
+        14 Corp Sales                                                           
+        10 Store Sales                                                          
+        16 Web Sales                                                            
+
+SQL> SELECT * FROM COMMISSION_sps
+  2  ORDER BY CommClass;
+
+C   COMMRATE                                                                    
+- ----------                                                                    
+A         .1                                                                    
+B        .08                                                                    
+C        .05                                                                    
+Z          0                                                                    
+
+SQL> SELECT * FROM PRODUCT_sps
+  2  ORDER BY ProdID;
+
+    PRODID PRODNAME              PRODCATID  PRODPRICE                           
+---------- -------------------- ---------- ----------                           
+       121 BD Hammer                     1          7                           
+       123 Acme Pry Bar                  1          5                           
+       124 Acme Hammer                   1        6.5                           
+       228 Makita Power Drill            2         65                           
+       229 BD Power Drill                2         59                           
+       235 Makita Power Drill            2         65                           
+       380 Acme Yard Stick               3       1.25                           
+       407 1# BD Screws                  4       4.25                           
+       480 1# BD Nails                   4          3                           
+       535 Schlage Door Knob             5        6.5                           
+       610 3M Duct Tape                  6       1.75                           
+
+    PRODID PRODNAME              PRODCATID  PRODPRICE                           
+---------- -------------------- ---------- ----------                           
+       618 3M Masking Tape               6       1.25                           
+
+12 rows selected.
+
+SQL> SELECT * FROM SALESREP_sps
+  2  ORDER BY SalesRepID;
+
+SALESREPID SALESREPFN SALESREPLN C     DEPTID                                   
+---------- ---------- ---------- - ----------                                   
+         8 Kay        Price      C         14                                   
+        10 Alice      Jones      A         10                                   
+        12 Grey       Taylor     B         14                                   
+        14 Sara       Day        Z         10                                   
+        20 Bob        Jackson    B         10                                   
+        22 Micah      Moore      Z         16                                   
+
+6 rows selected.
+
+SQL> SELECT * FROM CUSTOMER_sps
+  2  ORDER BY CustID;
+
+CUSTI CUSTFNAME       CUSTLNAME       CUSTPHONE  SALESREPID                     
+----- --------------- --------------- ---------- ----------                     
+A120  Jane            Adams           8175553434         12                     
+B200  Ann             Brown           2145551234          8                     
+G070  Kate            Green           8175551034         20                     
+G119  Amanda          Green                              14                     
+J090  Tim             Jones                              14                     
+S100  John            Smith           2145551212         10                     
+S120  Nicole          Sims                               22                     
+
+7 rows selected.
+
+SQL> SELECT * FROM ORDER_sps
+  2  ORDER BY OrderID;
+
+   ORDERID ORDERDATE CUSTI                                                      
+---------- --------- -----                                                      
+       100 24-JAN-22 S100                                                       
+       101 25-JAN-22 A120                                                       
+       102 25-JAN-22 J090                                                       
+       103 26-JAN-22 B200                                                       
+       104 26-JAN-22 S100                                                       
+       105 26-JAN-22 B200                                                       
+       106 27-JAN-22 G070                                                       
+       107 27-JAN-22 J090                                                       
+       108 28-JAN-22 S120                                                       
+       109 28-JAN-22 G119                                                       
+
+10 rows selected.
+
+SQL> SELECT * FROM ORDERDETAIL_sps
+  2  ORDER BY OrderID, ProdID;
+
+   ORDERID     PRODID    PRODQTY  PRODPRICE                                     
+---------- ---------- ---------- ----------                                     
+       100        121          2          8                                     
+       100        228          1         65                                     
+       100        407          1       4.25                                     
+       100        480          2          3                                     
+       101        610        200       1.75                                     
+       101        618        100       1.25                                     
+       102        121          1          7                                     
+       102        380          2       1.25                                     
+       102        535          4        7.5                                     
+       103        121         50          7                                     
+       103        123         20       6.25                                     
+
+   ORDERID     PRODID    PRODQTY  PRODPRICE                                     
+---------- ---------- ---------- ----------                                     
+       104        229          1         50                                     
+       104        380          2       1.25                                     
+       104        535          4        7.5                                     
+       104        610        200       1.75                                     
+       105        123         40          5                                     
+       105        610        200       1.75                                     
+       106        124          1        6.5                                     
+       107        229          1         59                                     
+       108        235          1         62                                     
+       108        407          1       5.25                                     
+       108        618          2       2.15                                     
+
+   ORDERID     PRODID    PRODQTY  PRODPRICE                                     
+---------- ---------- ---------- ----------                                     
+       109        121          1       8.25                                     
+       109        480          1       3.75                                     
+
+24 rows selected.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> set echo off
